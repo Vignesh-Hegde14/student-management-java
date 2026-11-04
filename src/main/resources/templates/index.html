@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Management</title><link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="topbar"><div><span class="brand-mark">S</span><strong>StudentDesk</strong></div><span class="top-note">STUDENT MANAGEMENT SYSTEM</span></header>
+<main class="container">
+  <section class="hero"><div><p class="eyebrow">OVERVIEW</p><h1>Student dashboard</h1><p class="muted">Manage student records, courses and eligibility in one place.</p></div>
+    <a class="button primary" th:href="@{/students/new}">＋ Add student</a>
+  </section>
+  <div class="alert success" th:if="${successMessage}" th:text="${successMessage}"></div>
+  <section class="stats">
+    <article class="stat-card"><span class="stat-label">TOTAL STUDENTS</span><strong th:text="${totalStudents}">0</strong><span class="stat-foot">All registered students</span></article>
+    <article class="stat-card"><span class="stat-label">ELIGIBLE STUDENTS</span><strong th:text="${eligibleStudents}">0</strong><span class="stat-foot">Based on course criteria</span></article>
+    <article class="stat-card"><span class="stat-label">COURSES</span><strong>4</strong><span class="stat-foot">BCA, BSc, BCom, Engineering</span></article>
+  </section>
+  <section class="panel">
+    <div class="panel-heading"><div><h2>Student records</h2><p class="muted">View and manage your student list.</p></div>
+      <form class="search" th:action="@{/}" method="get"><input name="keyword" placeholder="Search name or email..." th:value="${keyword}"><button class="button secondary" type="submit">Search</button><a class="clear" th:href="@{/}">Clear</a></form>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>STUDENT</th><th>EMAIL</th><th>COURSE</th><th>PERCENTAGE</th><th>ELIGIBILITY</th><th>ACTIONS</th></tr></thead>
+      <tbody><tr th:each="s : ${students}">
+        <td><strong th:text="${s.name}">Student</strong><small th:text="'ID: ' + ${s.id}">ID</small></td>
+        <td th:text="${s.email}">email</td><td><span class="course" th:text="${s.course}">BCA</span></td>
+        <td th:text="${#numbers.formatDecimal(s.percentage,1,2)} + '%'">0%</td>
+        <td><span th:if="${s.eligible}" class="status eligible">Eligible</span><span th:unless="${s.eligible}" class="status not-eligible">Not eligible</span></td>
+        <td class="actions"><a class="edit" th:href="@{/students/edit/{id}(id=${s.id})}">Edit</a>
+          <form th:action="@{/students/delete/{id}(id=${s.id})}" method="post" onsubmit="return confirm('Delete this student?')"><button class="delete" type="submit">Delete</button></form></td>
+      </tr><tr th:if="${#lists.isEmpty(students)}"><td colspan="6" class="empty">No students found. Add your first student to get started.</td></tr></tbody>
+    </table></div>
+  </section>
+  <p class="footer">StudentDesk · Built with Java, Spring Boot and Thymeleaf</p>
+</main>
+</body></html>
